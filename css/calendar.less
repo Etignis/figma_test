@@ -1,0 +1,94 @@
+.calendar_container{
+    overflow: hidden;
+    table.calendar{
+       /*margin: 0.5em;*/
+       margin: 0.5em auto;
+       cursor: default;
+       width: 21em;
+      // border-bottom: 1px solid @l-gray;
+       //float: left;
+       .noselect;
+       tr{
+           th{
+                text-align: center;
+                font-weight: bold;
+                text-transform: uppercase;
+                padding: 1em 0.3em;
+            }
+            td{
+                text-align: center;
+                padding: 0.1em;
+                font-weight: bold;
+                color: @m-gray;
+                width: 3em;
+                min-width: 3em;
+                height: 3em;
+                vertical-align: middle;
+                border: solid 2px rgba(255, 255, 255, 0);
+                .border-rad(100%);
+                .transition();
+                .noselect;
+            }
+            td.day_0{
+                color: @m-gray + #333;
+            }
+            td.day_w{
+                color: @m-gray - #333;
+            }
+            td.act{
+                border-color: @color;
+                cursor: pointer;
+            }
+            td.act:hover{
+                //background-color: @color + #666;
+                color: @black;
+            }
+            td.act:active{
+                background-color: @color;
+                color: @white;
+            }
+            td.month_before, td.month_after{
+                opacity: 0.5;
+                cursor: pointer;
+            }
+            td.month_before:hover, td.month_after:hover{
+                opacity: 1;
+            }
+            td.month_before:active, td.month_after:active{
+                color: @color;
+            }
+       }
+        tr.day_name{
+            //background: @color + #444;
+                border-top: 1px solid @l-gray;
+                border-bottom: 1px solid @l-gray;
+            td{
+                padding: 0.2em;
+                color: @color;
+                opacity: 0.7;
+                font-weight: bold;
+                
+            }
+        }
+    }
+    .calendar-info{
+       // float: left;
+       text-align: justify;
+       width: 19em;
+       margin: 0.5em auto;
+       border-bottom: 1px solid @l-gray;
+       border-top: 1px solid @l-gray;
+        h1{
+            color: @color;
+            font-size: 120%;
+            font-weight: bold;
+        }
+    }
+}
+.calendar_container:before, .calendar_container:after{
+    content: "";
+    display: table;
+    width: 0;
+    height: 0;
+    clear: both;
+}
