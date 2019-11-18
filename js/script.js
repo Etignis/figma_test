@@ -48,17 +48,17 @@ document.addEventListener("DOMContentLoaded", function() {
 	function getData(){
 		return myData.concat({
 			smth: false,
-			data: 'Итого в среднем',
-			visits: myData.reduce((nAc, nVal) => nAc+nVal.visits, 0),
-			users: myData.reduce((nAc, nVal) => nAc+nVal.users, 0),
-			views: myData.reduce((nAc, nVal) => nAc+nVal.views, 0)
+			data: 'Итого в среднем', // раз "в среднем", выводим среднее значение
+			visits: ~~(myData.reduce((nAc, nVal) => nAc+nVal.visits, 0)/myData.length),
+			users: ~~(myData.reduce((nAc, nVal) => nAc+nVal.users, 0)/myData.length),
+			views: ~~(myData.reduce((nAc, nVal) => nAc+nVal.views, 0)/myData.length)
 		});
 	}
 	function getMinY(){
-		return Math.min.apply(null, myData.filter(el=>el.data!="Итого в среднем").map(el=>el.visits))-10
+		return Math.min.apply(null, myData.map(el=>el.visits))-10
 	}
 	function getMaxY(){
-		return Math.max.apply(null, myData.filter(el=>el.data!="Итого в среднем").map(el=>el.visits))+10
+		return Math.max.apply(null, myData.map(el=>el.visits))+10
 	}
 	
 	function updateChart(nRow, sValue, sLabel){
@@ -113,6 +113,7 @@ document.addEventListener("DOMContentLoaded", function() {
 						return;
 			}
 			if(requestedElem) {
+				myChart.chart.boxes[2].labelFontColor = 'red';
 				activeElements = [requestedElem];
 			}
 		}
@@ -129,6 +130,8 @@ Chart.defaults.global.tooltips.titleFontColor = '#000';
 Chart.defaults.global.tooltips.bodyFontColor = '#000';
 Chart.defaults.global.tooltips.displayColors = false;
 Chart.defaults.global.tooltips.displayTitle = false;
+Chart.defaults.scale.gridLines.drawOnChartArea = false;
+//Chart.defaults.scale.gridLines.drawTick = false;
 // add shadow
 let draw = Chart.controllers.line.prototype.draw;
 Chart.controllers.line = Chart.controllers.line.extend({
@@ -152,7 +155,7 @@ Chart.controllers.line = Chart.controllers.line.extend({
     type: 'line',
 
 		data: {
-      labels: myData.filter(el=>el.data!="Итого в среднем").map(el=>el.data),//headers,
+      labels: myData.map(el=>el.data),//headers,
       datasets: [{
         label: '',//rowheaders[0],
         data: myData.map(el=>el.visits),//myData[0],
@@ -167,7 +170,8 @@ Chart.controllers.line = Chart.controllers.line.extend({
       }]
     },
     options: {
-			responsive: true,		
+			responsive: true,
+			
 			tooltips: {
 						callbacks: {
 							 title: function() {}
