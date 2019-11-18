@@ -1,10 +1,10 @@
 <!doctype html>
 <html>
 <head>
-  <title>Заголовок страницы</title>
+  <title>Commerce</title>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
-  <meta name="description" content="Краткое описание страницы"> 
+  <meta name="description" content="Commerce"> 
   <meta name="Keywords" content="ключевые слова, через запятую"> 
   <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/handsontable/dist/handsontable.full.min.css">
   <!--<link rel="stylesheet" type="text/css" href="css/style.css">-->
@@ -267,6 +267,30 @@
 	#social .fb:hover{		
 		background-image: url(imgs/fb_hover.png);
 	}
+	
+	.toolbar{
+		width: 100%;
+		margin: 0.5rem 0;
+		padding: 0.5rem 0;
+	}
+	button{
+		border-radius: 4px;
+    background: var(--serv-color);
+    border: none;
+		transition: background .3s, box-shadow .3s;
+		cursor: pointer;
+		display: inline-block;
+		margin: .3rem;
+		padding: .7rem;
+	}
+	button:hover{
+    background: var(--main-color);
+    box-shadow: 0 -1px 2px 4px var(--serv-color);
+	}
+	button:active{
+    background: var(--selected-color);
+		box-shadow: none;
+	}
 	</style>
 </head>
 
@@ -299,6 +323,9 @@
 		<canvas class="chartJSContainer" width='400' height='80'></canvas>
 	</div>
 	<div id="example1" class='inner_container'></div>
+	<div class='toolbar'>
+		<button id='rowAdder'>+ Добавить строку</button>
+	<div>
 	
  </div> 
  

@@ -41,21 +41,84 @@ document.addEventListener("DOMContentLoaded", function() {
 			visits: 42,
 			users: 36,
 			views: 97
-		},
-		{
-			smth: false,
-			data: 'Итого в среднем',
-			visits: 0,
-			users: 0,
-			views: 0
 		}
+		
   ];
  	
+	function getData(){
+		return myData.concat({
+			smth: false,
+			data: 'Итого в среднем',
+			visits: myData.reduce((nAc, nVal) => nAc+nVal.visits, 0),
+			users: myData.reduce((nAc, nVal) => nAc+nVal.users, 0),
+			views: myData.reduce((nAc, nVal) => nAc+nVal.views, 0)
+		});
+	}
 	function getMinY(){
 		return Math.min.apply(null, myData.filter(el=>el.data!="Итого в среднем").map(el=>el.visits))-10
 	}
 	function getMaxY(){
 		return Math.max.apply(null, myData.filter(el=>el.data!="Итого в среднем").map(el=>el.visits))+10
+	}
+	
+	function updateChart(nRow, sValue, sLabel){
+		if(sLabel) {
+			myChart.data.labels.push(sLabel);
+		}
+		myChart.data.datasets[0].data[nRow] = sValue;
+		myChart.options.scales.yAxes[0].ticks.min = getMinY();
+		myChart.options.scales.yAxes[0].ticks.max = getMaxY()
+		myChart.update();
+	}
+	
+	function addRow(){
+		//
+		function getCellData(){
+			let aData = myData.filter(el => el.smth);
+			let sDate = aData[aData.length-1].data;
+			
+			let aDate = sDate.split("/");
+			aDate[0] ++;
+			
+			return aDate.join("/"); // yes, 32/01/2019
+		}
+		function getNumber(){
+			let nMax = 180;
+			let nMin = 30;
+			return nMin + Math.floor(Math.random() * Math.floor(nMax-nMin));
+		}
+		myData.push({
+			smth: true,
+			data: getCellData(),
+			visits: getNumber(),
+			users: getNumber(),
+			views: getNumber()
+		});
+		let aNewData = getData()
+		hot.getInstance().loadData(aNewData);
+    hot.render();
+		updateChart(myData.length-1, myData[myData.length-1].visits, myData[myData.length-1].data);
+		
+	}
+	
+	function highligtPoint(nIndex) {
+		activeElements = []
+		if(nIndex>-1){
+			if(myChart.tooltip._active == undefined)
+				myChart.tooltip._active = []
+			var activeElements = myChart.tooltip._active;
+			var requestedElem = myChart.getDatasetMeta(0).data[nIndex];
+			for(var i = 0; i < activeElements.length; i++) {
+				 if(activeElements[i] && requestedElem && requestedElem._index == activeElements[i]._index)  
+						return;
+			}
+			if(requestedElem) {
+				activeElements = [requestedElem];
+			}
+		}
+		myChart.tooltip._active = activeElements;
+		myChart.tooltip.update(true);
+		myChart.draw();
 	}
 	
 /**/
@@ -183,7 +246,7 @@ class PasswordEditor extends Handsontable.editors.TextEditor {
 }
 
   hot = new Handsontable(example, {
-    data: myData,
+    data: getData(),
     //rowHeaders: rowheaders,
     colHeaders: headers,
     //colWidths: 88,
@@ -216,29 +279,29 @@ class PasswordEditor extends Handsontable.editors.TextEditor {
 				editor: PasswordEditor
 			},
 		],
-		columnSummary: [			
-			{
-				destinationRow: 0,
-				destinationColumn: 2,
-				reversedRowCoords: true,
-				type: 'sum',
-				forceNumeric: true
-			},
-			{
-				destinationRow: 0,
-				destinationColumn: 3,
-				reversedRowCoords: true,
-				type: 'sum',
-				forceNumeric: true
-			},
-			{
-				destinationRow: 0,
-				destinationColumn: 4,
-				reversedRowCoords: true,
-				type: 'sum',
-				forceNumeric: true
-			},
-		],
+		// columnSummary: [			
+			// {
+				// destinationRow: 0,
+				// destinationColumn: 2,
+				// reversedRowCoords: true,
+				// type: 'sum',
+				// forceNumeric: true
+			// },
+			// {
+				// destinationRow: 0,
+				// destinationColumn: 3,
+				// reversedRowCoords: true,
+				// type: 'sum',
+				// forceNumeric: true
+			// },
+			// {
+				// destinationRow: 0,
+				// destinationColumn: 4,
+				// reversedRowCoords: true,
+				// type: 'sum',
+				// forceNumeric: true
+			// },
+		// ],
 		cells: function(row, col, prop){
 			var cellProperties = {};
 			var data = this.instance.getData();
@@ -247,7 +310,7 @@ class PasswordEditor extends Handsontable.editors.TextEditor {
 				cellProperties.renderer = "strangeThingRenderer"; // uses lookup map
 			} 
 
-			if (row === myData.length-1) {
+			if (row === myData.length) {
         cellProperties.className = 'lastRow'
       }
 			return cellProperties;
@@ -265,10 +328,7 @@ class PasswordEditor extends Handsontable.editors.TextEditor {
           var value = change[3] === '' ? 0 : change[3];
           
 					if(column == 'visits'){
-						myChart.data.datasets[0].data[row] = value;
-						myChart.options.scales.yAxes[0].ticks.min = getMinY();
-						myChart.options.scales.yAxes[0].ticks.max = getMaxY()
-						myChart.update();
+						updateChart(row, value);
 					}
         });
       }
@@ -281,4 +341,13 @@ class PasswordEditor extends Handsontable.editors.TextEditor {
 			borders[i].style.backgroundColor = sServColor;
 		}
 	});
+	hot.addHook('afterOnCellMouseOver', function(e, coords, TD) {
+     let nIndex = coords.row;
+		 highligtPoint(nIndex); 
+  });
+	hot.addHook('afterOnCellMouseOut', function(e, coords, TD) {
+		 highligtPoint(-1); 
+  });
+	
+	 rowAdder.onclick = addRow;
 });
