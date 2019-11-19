@@ -5,15 +5,15 @@
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
   <meta name="description" content="Commerce"> 
-  <meta name="Keywords" content="ключевые слова, через запятую"> 
+  <meta name="Keywords" content="Commerce"> 
   <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/handsontable/dist/handsontable.full.min.css">
-  <!--<link rel="stylesheet" type="text/css" href="css/style.css">-->
-  <link rel="shortcut icon" href="favicon.ico" />
+  <link rel="stylesheet" type="text/css" href="css/style.css">
+	<link rel="icon" type="image/png" href="imgs/favicon-16x16.png" sizes="16x16">
+  <link rel="icon" type="image/png" href="imgs/favicon-32x32.png" sizes="32x32">
 	<link href="https://fonts.googleapis.com/css?family=Roboto+Slab&display=swap" rel="stylesheet">
   <script type='text/javascript' src='https://cdn.jsdelivr.net/npm/chart.js@2.9.3/dist/Chart.min.js'></script>
   <script type='text/javascript' src='https://cdn.jsdelivr.net/npm/handsontable/dist/handsontable.full.min.js'></script>
-  <script type='text/javascript' src='js/script.js'></script>
-	
+  <script type='text/javascript' src='js/script.js'></script>	
   
   <!-- IE must understand HTML5: -->
   <!--[if IE]>
@@ -26,279 +26,10 @@
    article, aside, details, figcaption, figure, footer,header,
    hgroup, menu, nav, section, div { display: block; }
   </style>
-	<style>
-	:root{
-		--main-color: #DFC800;
-		--second-color: rgba(133, 117, 74, 0.31);
-		--row-back-second: #F6F6F6;
-		--serv-color:#E5E5E5;
-		--selected-color: #85754A;
-	}
-	body{
-		font-family: Roboto Slab;
-		font-style: normal;
-		font-weight: normal;
-		font-size: 14px;
-		background-color: #eee;
-		
-		margin: 0;
-		padding: 0;
-	}
-	.handsontable table.htCore{
-		border: 1px solid #E5E5E5;
-	}
-	.handsontable td:first-of-type,
-	.handsontable tr:first-child th,
-	.handsontable th:first-child{
-		border-top-width: 0;
-		border-left-width: 0;
-	}
-	.handsontable th {
-		background-color: #FFF;
-		border: none;
-		text-transform: uppercase;
-		text-align: left;
-		font-weight: bold;
-	}
-	.handsontable  th:nth-of-type(3) {
-		color: var(--selected-color);
-	}
-	.handsontable td {
-		background-color: #FFF;
-		border: none;
-		text-align: left;
-		border-bottom: 1px solid #E5E5E5;
-		
-	}
-	.handsontable td, .handsontable th {
-		height: 50px;
-		vertical-align: middle;
-	}
-	
-	td.smthStrange {
-		color: red;
-		position: relative;
-		text-align: right;
-		
-	}
-	
-	.handsontable tr:hover td {
-		background: var(--row-back-second);
-		cursor :pointer;
-	}
-
-	.handsontableInput {
-		background-color: var(--row-back-second);
-		border: 1px soid var(--row-back-second);
-		border-bottom: 1px solid var(--main-color);
-		border-radius: 4px;
-		caret-color: var(--main-color);
-		box-shadow: none;
-	}
-	
-	
-	.smthStrange::before{
-		--size: 1.4em;
-		content: '';
-		display: inline-block;
-		width: var(--size);
-		height: var(--size);
-		background: var(--main-color);
-		border-radius: 4px;
-		border: 1px solid var(--serv-color);
-		box-shadow: inset 0 0 2px 2px white;
-		margin-right: 0.3em;
-		margin-top: .5em;
-	/*	position: absolute;
-		right: 0.2em;
-		top: 0.4em;*/
-	}
-	
-	td.center-center{
-		
-	}
-	td.lastRow{
-		text-transform: uppercase;
-		background: var(--second-color);
-		font-weight: bold;
-	}
-	.handsontable thead th.ht__active_highlight{
-		background: var(--second-color);
-	}
-	.handsontable td.area:before{
-		background: var(--second-color);
-	}
-	.inner_container{
-		max-width: 960px; 
-		margin: 0 auto
-	}
-	
-	h1{
-		text-transform: uppercase;
-		font-weight: bold;
-		max-width: 960px; 
-		margin: 0 auto;
-		font-size: 18px;
-	}
-	h1 span{
-		font-weight: normal;
-	}
-	
-	header {
-		padding-bottom: 1rem;
-		margin-bottom: 1rem;
-		border-bottom: 4px solid var(--serv-color);
-	}
-	header > div{
-		display: flex;
-		justify-content: space-between;
-		align-items: flex-end;
-	}
-	
-	#main_menu{
-		list-style: none;
-		display: flex;
-		justify-content: space-around;
-		align-items: flex-end;
-		padding: 0;
-		margin: 0;
-		
-	}
-	#main_menu li{
-	}
-	#main_menu a{
-		text-decoration: none;
-		color: black;
-		text-transform: uppercase;
-		font-size: 14px;
-		line-height: 34px;
-		text-align: center;
-		padding: 0 1em;
-	}
-	#main_menu a:hover{
-		text-decoration: underline;
-	}
-	
-	#main_menu a.active{
-		color: var(--selected-color);
-	}
-	
-	#person{
-		padding-bottom: 0.5em;
-	}
-	#person a{
-		--size: 2em;
-		display: block;
-		background: url(imgs/user.png);
-		width: var(--size);
-		height: var(--size);
-		background-size: cover;
-		background-repeat: no-repeat;
-	}
-	
-	#person a:hover{
-		background-image: url(imgs/user_hover.png);
-	}
-	
-	footer{
-		background: #424242;
-		color: #C4C4C4;
-		max-width: 1024px;
-		margin: 0 auto;
-		font-size: 10px;
-	}
-	
-	footer .inner_container{
-		display: flex;
-		justify-content: space-between;
-		align-items: center;
-		height: 4rem;
-	}
-	
-	#copyright a{
-		color: var(--serv-color);
-		text-decoration: none;
-		text-transform: uppercase;
-	}
-	#copyright a:hover{
-		color: var(--main-color);
-	}
-	
-	#social{
-		list-style: none;
-		display: flex;
-		justify-content: space-around;
-		padding: 0;
-		margin: 0;
-		
-	}
-	#social li{
-		margin:0 0.5em;
-	}
-	#social a{
-		--size: 2em;
-		display: block;
-		width: var(--size);
-		height: var(--size);
-		background-size: 1em;		
-    background-position: center center;
-		background-repeat: no-repeat;
-		color:  #424242;
-		
-		border: 2px solid var(--serv-color);
-		border-radius: 50%;
-	}
-	#social a:hover{
-		color: var(--main-color);
-		border-color: var(--main-color);
-	}
-	#social .vk{		
-		background-image: url(imgs/vk.png);
-	}
-	#social .vk:hover{		
-		background-image: url(imgs/vk_hover.png);
-	}
-	#social .insta{		
-		background-image: url(imgs/insta.png);
-	}
-	#social .insta:hover{		
-		background-image: url(imgs/insta_hover.png);
-	}
-	#social .fb{		
-		background-image: url(imgs/fb.png);
-	}
-	#social .fb:hover{		
-		background-image: url(imgs/fb_hover.png);
-	}
-	
-	.toolbar{
-		width: 100%;
-		margin: 0.5rem 0;
-		padding: 0.5rem 0;
-	}
-	button{
-		border-radius: 4px;
-    background: var(--serv-color);
-    border: none;
-		transition: background .3s, box-shadow .3s;
-		cursor: pointer;
-		display: inline-block;
-		margin: .3rem;
-		padding: .7rem;
-	}
-	button:hover{
-    background: var(--main-color);
-    box-shadow: 0 -1px 2px 4px var(--serv-color);
-	}
-	button:active{
-    background: var(--selected-color);
-		box-shadow: none;
-	}
-	</style>
 </head>
 
 <body>
-	<div id='wrapper' style='max-width: 1024px; margin: 0 auto; padding: 1rem 0; background: white'>
+	<div id='wrapper'>
 		<header>
 			<div class='inner_container'>
 				<div id='logo'>
@@ -315,22 +46,26 @@
 				</ul>
 				<div id='person'>
 					<a href='#'>
-						
+						<!--
+						Лучше использовать иконочный шрифт или svg
+						Растровые изображения лучше объединять в спрайты
+						-->
 					</a>
 				</div>
 			</div>
 		</header>
    
-	<h1>Sparkling water <span>22/01 - 26/01</span></h1>
 	<div class='inner_container'>
+		<h1>Sparkling water <span>22/01 - 26/01</span></h1>
+		
 		<canvas class="chartJSContainer" width='400' height='80'></canvas>
+		
+		<div id="table_container"></div>
+		
+		<div class='toolbar'>
+			<button id='rowAdder'>Добавить строку</button>
+		</div>
 	</div>
-	<div id="example1" class='inner_container'></div>
-	<div class='toolbar'>
-		<button id='rowAdder'>+ Добавить строку</button>
-	</div>
-	
- </div> 
  
 	<footer>
 		<div class='inner_container'>
@@ -339,24 +74,36 @@
 					© PUBLICIS GROUPE 2019
 				</a>
 			</div>
+			
+			<!--
+			Лучше использовать иконочный шрифт или svg
+			-->
 			<ul id='social'>
 				<li>
 					<a href='#' class='vk'>	
-						
+						<object type="image/svg+xml" data="imgs/vk.svg" width="12" height="12" >
+							 VK
+						</object>
 					</a>
 				</li>
 				<li>
 					<a href='#' class='insta'>		
-											
+						<object type="image/svg+xml" data="imgs/insta.svg" width="12" height="12" >
+							 I
+						</object>					
 					</a>
 				</li>
 				<li>
 					<a href='#' class='fb'>	
-						
+						<object type="image/svg+xml" data="imgs/fb.svg" width="12" height="12" >
+							 FB
+						</object>
 					</a>
 				</li>
 			</ul>
 		</div>
 	</footer>
+	
+	</div> 
 </body>
 </html>

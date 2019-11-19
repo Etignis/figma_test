@@ -2,7 +2,7 @@ document.addEventListener("DOMContentLoaded", function() {
 	var sMainColor = '#DFC800';
 	var sServColor = '#E5E5E5';
   var
-    example = document.getElementById('example1'),
+    example = document.getElementById('table_container'),
     hot;
 
   var headers = ["", "Дни", "Визиты", "Посетители", "Просмотры"];
@@ -45,6 +45,7 @@ document.addEventListener("DOMContentLoaded", function() {
 		
   ];
  	
+	// добавляем итоговую строку
 	function getData(){
 		return myData.concat({
 			smth: false,
@@ -54,6 +55,8 @@ document.addEventListener("DOMContentLoaded", function() {
 			views: ~~(myData.reduce((nAc, nVal) => nAc+nVal.views, 0)/myData.length)
 		});
 	}
+	
+	// задаем значения оси Y
 	function getMinY(){
 		return Math.min.apply(null, myData.map(el=>el.visits))-10
 	}
@@ -61,6 +64,7 @@ document.addEventListener("DOMContentLoaded", function() {
 		return Math.max.apply(null, myData.map(el=>el.visits))+10
 	}
 	
+	// обновляем график, когда есть новые данные
 	function updateChart(nRow, sValue, sLabel){
 		if(sLabel) {
 			myChart.data.labels.push(sLabel);
@@ -71,8 +75,8 @@ document.addEventListener("DOMContentLoaded", function() {
 		myChart.update();
 	}
 	
+	// для демонстрации обновления таблицы и графика
 	function addRow(){
-		//
 		function getCellData(){
 			let aData = myData.filter(el => el.smth);
 			let sDate = aData[aData.length-1].data;
@@ -97,10 +101,10 @@ document.addEventListener("DOMContentLoaded", function() {
 		let aNewData = getData()
 		hot.getInstance().loadData(aNewData);
     hot.render();
-		updateChart(myData.length-1, myData[myData.length-1].visits, myData[myData.length-1].data);
-		
+		updateChart(myData.length-1, myData[myData.length-1].visits, myData[myData.length-1].data);		
 	}
 	
+	// показываем данные на графике при наведении на строку таблицы
 	function highligtPoint(nIndex) {
 		activeElements = []
 		if(nIndex>-1){
@@ -122,6 +126,16 @@ document.addEventListener("DOMContentLoaded", function() {
 		myChart.draw();
 	}
 	
+	// подсвечиваем строку при наведении на график
+	function highlightRow(nRowIndex)  {
+		hot.table.getElementsByTagName("tr").forEach(function(oEl){
+			oEl.classList.remove("highlighted");
+		});
+		if(nRowIndex>-1){
+			hot.table.getElementsByTagName("tr")[nRowIndex+1].classList.add("highlighted");
+		}
+	}
+	
 /**/
 // CHART
 Chart.defaults.global.legend.display = false;
@@ -131,8 +145,18 @@ Chart.defaults.global.tooltips.bodyFontColor = '#000';
 Chart.defaults.global.tooltips.displayColors = false;
 Chart.defaults.global.tooltips.displayTitle = false;
 Chart.defaults.scale.gridLines.drawOnChartArea = false;
-//Chart.defaults.scale.gridLines.drawTick = false;
-// add shadow
+
+Chart.plugins.register({
+  afterEvent: function(chart, e) {
+		if(chart.active.length) {
+			let nRowIndex = chart.active[0]._index;
+			highlightRow(nRowIndex);
+		} else {
+			highlightRow(-1);
+		}
+  }
+});
+// добавляем тень на график
 let draw = Chart.controllers.line.prototype.draw;
 Chart.controllers.line = Chart.controllers.line.extend({
     draw: function() {
@@ -155,12 +179,11 @@ Chart.controllers.line = Chart.controllers.line.extend({
     type: 'line',
 
 		data: {
-      labels: myData.map(el=>el.data),//headers,
+      labels: myData.map(el=>el.data),
       datasets: [{
-        label: '',//rowheaders[0],
-        data: myData.map(el=>el.visits),//myData[0],
+        label: '',
+        data: myData.map(el=>el.visits),
         borderWidth: 4,
-        backgroundColor: 'rgb(255, 236, 217)',
 				lineTension: 0,
 				pointRadius: 0,
 				pointHoverRadius: 0,
@@ -172,7 +195,7 @@ Chart.controllers.line = Chart.controllers.line.extend({
     options: {
 			responsive: true,
 			
-			tooltips: {
+			tooltips: { // перезаписываем tooltip
 						callbacks: {
 							 title: function() {}
 						}
@@ -218,7 +241,7 @@ Chart.controllers.line = Chart.controllers.line.extend({
 	/// CHART END
 /**/
 
-/// strange thing renderer
+/// показываем желтый квадратик
 function strangeThingRenderer(instance, td, row, col, prop, value, cellProperties) {
   Handsontable.renderers.TextRenderer.apply(this, arguments);
 	if(value) {
@@ -227,11 +250,7 @@ function strangeThingRenderer(instance, td, row, col, prop, value, cellPropertie
 	td.innerHTML='';
 }
 
-
-
 Handsontable.renderers.registerRenderer('strangeThingRenderer', strangeThingRenderer);
-
-
 
 class PasswordEditor extends Handsontable.editors.TextEditor {
   createElements() {
@@ -251,9 +270,7 @@ class PasswordEditor extends Handsontable.editors.TextEditor {
 
   hot = new Handsontable(example, {
     data: getData(),
-    //rowHeaders: rowheaders,
     colHeaders: headers,
-    //colWidths: 88,
 		stretchH: 'all',
 		scrollV: 'none',
 		currentColClassName: "selectedColumn",
@@ -283,29 +300,6 @@ class PasswordEditor extends Handsontable.editors.TextEditor {
 				editor: PasswordEditor
 			},
 		],
-		// columnSummary: [			
-			// {
-				// destinationRow: 0,
-				// destinationColumn: 2,
-				// reversedRowCoords: true,
-				// type: 'sum',
-				// forceNumeric: true
-			// },
-			// {
-				// destinationRow: 0,
-				// destinationColumn: 3,
-				// reversedRowCoords: true,
-				// type: 'sum',
-				// forceNumeric: true
-			// },
-			// {
-				// destinationRow: 0,
-				// destinationColumn: 4,
-				// reversedRowCoords: true,
-				// type: 'sum',
-				// forceNumeric: true
-			// },
-		// ],
 		cells: function(row, col, prop){
 			var cellProperties = {};
 			var data = this.instance.getData();
@@ -319,7 +313,6 @@ class PasswordEditor extends Handsontable.editors.TextEditor {
       }
 			return cellProperties;
 		},
-		//rowHeights: 50,
     licenseKey: 'non-commercial-and-evaluation',
     fillHandle: {
       autoInsertRow: false,
@@ -338,13 +331,14 @@ class PasswordEditor extends Handsontable.editors.TextEditor {
       }
     }
   });
-	
+	// заменяем цвета выделений...
 	Handsontable.hooks.add('afterSelection', function(){
 		var borders = document.querySelectorAll('.handsontable .wtBorder');
 		for (var i = 0; i < borders.length; i++) {
 			borders[i].style.backgroundColor = sServColor;
 		}
 	});
+	// хук для отображения данных на графике
 	hot.addHook('afterOnCellMouseOver', function(e, coords, TD) {
      let nIndex = coords.row;
 		 highligtPoint(nIndex); 
@@ -353,5 +347,5 @@ class PasswordEditor extends Handsontable.editors.TextEditor {
 		 highligtPoint(-1); 
   });
 	
-	 rowAdder.onclick = addRow;
+	rowAdder.onclick = addRow; // добавляем строчку с рандомными данными
 });
