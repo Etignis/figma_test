@@ -136,44 +136,44 @@ document.addEventListener("DOMContentLoaded", function() {
 		}
 	}
 	
-/**/
-// CHART
-Chart.defaults.global.legend.display = false;
-Chart.defaults.global.tooltips.backgroundColor = '#EEE';
-Chart.defaults.global.tooltips.titleFontColor = '#000';
-Chart.defaults.global.tooltips.bodyFontColor = '#000';
-Chart.defaults.global.tooltips.displayColors = false;
-Chart.defaults.global.tooltips.displayTitle = false;
-Chart.defaults.scale.gridLines.drawOnChartArea = false;
+	/**/
+	// CHART
+	Chart.defaults.global.legend.display = false;
+	Chart.defaults.global.tooltips.backgroundColor = '#EEE';
+	Chart.defaults.global.tooltips.titleFontColor = '#000';
+	Chart.defaults.global.tooltips.bodyFontColor = '#000';
+	Chart.defaults.global.tooltips.displayColors = false;
+	Chart.defaults.global.tooltips.displayTitle = false;
+	Chart.defaults.scale.gridLines.drawOnChartArea = false;
 
-Chart.plugins.register({
-  afterEvent: function(chart, e) {
-		if(chart.active.length) {
-			let nRowIndex = chart.active[0]._index;
-			highlightRow(nRowIndex);
-		} else {
-			highlightRow(-1);
+	Chart.plugins.register({
+		afterEvent: function(chart, e) {
+			if(chart.active.length) {
+				let nRowIndex = chart.active[0]._index;
+				highlightRow(nRowIndex);
+			} else {
+				highlightRow(-1);
+			}
 		}
-  }
-});
-// добавляем тень на график
-let draw = Chart.controllers.line.prototype.draw;
-Chart.controllers.line = Chart.controllers.line.extend({
-    draw: function() {
-        draw.apply(this, arguments);
-        let ctx = this.chart.chart.ctx;
-        let _stroke = ctx.stroke;
-        ctx.stroke = function() {
-            ctx.save();
-            ctx.shadowColor = 'rgba(133, 117, 74, 0.31)';
-            ctx.shadowBlur = 8;
-            ctx.shadowOffsetX = 0;
-            ctx.shadowOffsetY = 6;
-            _stroke.apply(this, arguments)
-            ctx.restore();
-        }
-    }
-});
+	});
+	// добавляем тень на график
+	let draw = Chart.controllers.line.prototype.draw;
+	Chart.controllers.line = Chart.controllers.line.extend({
+			draw: function() {
+					draw.apply(this, arguments);
+					let ctx = this.chart.chart.ctx;
+					let _stroke = ctx.stroke;
+					ctx.stroke = function() {
+							ctx.save();
+							ctx.shadowColor = 'rgba(133, 117, 74, 0.31)';
+							ctx.shadowBlur = 8;
+							ctx.shadowOffsetX = 0;
+							ctx.shadowOffsetY = 6;
+							_stroke.apply(this, arguments)
+							ctx.restore();
+					}
+			}
+	});
 
   var options = {
     type: 'line',
@@ -239,34 +239,35 @@ Chart.controllers.line = Chart.controllers.line.extend({
   var myChart = new Chart(ctx, options);
 	
 	/// CHART END
-/**/
+	/**/
 
-/// показываем желтый квадратик
-function strangeThingRenderer(instance, td, row, col, prop, value, cellProperties) {
-  Handsontable.renderers.TextRenderer.apply(this, arguments);
-	if(value) {
-		td.className = 'smthStrange';
+	/// показываем желтый квадратик
+	function strangeThingRenderer(instance, td, row, col, prop, value, cellProperties) {
+		Handsontable.renderers.TextRenderer.apply(this, arguments);
+		if(value) {
+			td.className = 'smthStrange';
+		}
+		td.innerHTML='';
 	}
-	td.innerHTML='';
-}
 
-Handsontable.renderers.registerRenderer('strangeThingRenderer', strangeThingRenderer);
+	Handsontable.renderers.registerRenderer('strangeThingRenderer', strangeThingRenderer);
 
-class PasswordEditor extends Handsontable.editors.TextEditor {
-  createElements() {
-    super.createElements();
-    
-    this.TEXTAREA = this.hot.rootDocument.createElement('input');
-    this.TEXTAREA.setAttribute('type', 'text');
-    this.TEXTAREA.className = 'handsontableInput';
-    this.textareaStyle = this.TEXTAREA.style;
-    this.textareaStyle.width = 0;
-    this.textareaStyle.height = 0;
-    
-    Handsontable.dom.empty(this.TEXTAREA_PARENT);
-    this.TEXTAREA_PARENT.appendChild(this.TEXTAREA);
-  }
-}
+	// Переопределяем редактор текста (в основном для выравнивания содержимого)
+	class CustomEditor extends Handsontable.editors.TextEditor {
+		createElements() {
+			super.createElements();
+			
+			this.TEXTAREA = this.hot.rootDocument.createElement('input');
+			this.TEXTAREA.setAttribute('type', 'text');
+			this.TEXTAREA.className = 'handsontableInput';
+			this.textareaStyle = this.TEXTAREA.style;
+			this.textareaStyle.width = 0;
+			this.textareaStyle.height = 0;
+			
+			Handsontable.dom.empty(this.TEXTAREA_PARENT);
+			this.TEXTAREA_PARENT.appendChild(this.TEXTAREA);
+		}
+	}
 
   hot = new Handsontable(example, {
     data: getData(),
@@ -287,17 +288,17 @@ class PasswordEditor extends Handsontable.editors.TextEditor {
 			{
 				data: 'visits',
 				editor: 'numeric',
-				editor: PasswordEditor
+				editor: CustomEditor
 			},
 			{
 				data: 'users',
 				editor: 'numeric',
-				editor: PasswordEditor
+				editor: CustomEditor
 			},
 			{
 				data: 'views',
 				editor: 'numeric',
-				editor: PasswordEditor
+				editor: CustomEditor
 			},
 		],
 		cells: function(row, col, prop){
@@ -305,11 +306,11 @@ class PasswordEditor extends Handsontable.editors.TextEditor {
 			var data = this.instance.getData();
 
 			if(prop == 'smth') {
-				cellProperties.renderer = "strangeThingRenderer"; // uses lookup map
+				cellProperties.renderer = "strangeThingRenderer"; // для отображения "квадратика"
 			} 
 
 			if (row === myData.length) {
-        cellProperties.className = 'lastRow'
+        cellProperties.className = 'lastRow' 
       }
 			return cellProperties;
 		},
@@ -317,7 +318,7 @@ class PasswordEditor extends Handsontable.editors.TextEditor {
     fillHandle: {
       autoInsertRow: false,
     },
-    beforeChange: function(changes, src) {
+    beforeChange: function(changes, src) { // отлавливаем событие редактирвания ячейки. Перерисовывавем график.
     	if (src !== 'loadData') {
         changes.forEach((change) => {
         	var row = change[0];
