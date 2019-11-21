@@ -49,19 +49,27 @@ document.addEventListener("DOMContentLoaded", function() {
 	function getData(){
 		return myData.concat({
 			smth: false,
-			data: 'Итого в среднем', // раз "в среднем", выводим среднее значение
-			visits: ~~(myData.reduce((nAc, nVal) => nAc+nVal.visits, 0)/myData.length),
-			users: ~~(myData.reduce((nAc, nVal) => nAc+nVal.users, 0)/myData.length),
-			views: ~~(myData.reduce((nAc, nVal) => nAc+nVal.views, 0)/myData.length)
+			data: 'Итого в сумме', // раз "в среднем", выводим среднее значение
+			visits: ~~(myData.reduce((nAc, nVal) => nAc+parseFloat(nVal.visits), 0)),
+			users: ~~(myData.reduce((nAc, nVal) => nAc+parseFloat(nVal.users), 0)),
+			views: ~~(myData.reduce((nAc, nVal) => nAc+parseFloat(nVal.views), 0))
 		});
 	}
 	
 	// задаем значения оси Y
-	function getMinY(){
-		return Math.min.apply(null, myData.map(el=>el.visits))-10
+	function getMinY(nValue){
+		let aVals = myData.map(el=>el.visits);
+		if(nValue) {
+			aVals = aVals.concat([nValue]);
+		}
+		return Math.min.apply(null, aVals)-10
 	}
-	function getMaxY(){
-		return Math.max.apply(null, myData.map(el=>el.visits))+10
+	function getMaxY(nValue){
+		let aVals = myData.map(el=>el.visits);
+		if(nValue) {
+			aVals = aVals.concat([nValue]);
+		}
+		return Math.max.apply(null, aVals)+10
 	}
 	
 	// обновляем график, когда есть новые данные
@@ -70,8 +78,8 @@ document.addEventListener("DOMContentLoaded", function() {
 			myChart.data.labels.push(sLabel);
 		}
 		myChart.data.datasets[0].data[nRow] = sValue;
-		myChart.options.scales.yAxes[0].ticks.min = getMinY();
-		myChart.options.scales.yAxes[0].ticks.max = getMaxY()
+		myChart.options.scales.yAxes[0].ticks.min = getMinY(sValue);
+		myChart.options.scales.yAxes[0].ticks.max = getMaxY(sValue);
 		myChart.update();
 	}
 	
@@ -268,6 +276,17 @@ document.addEventListener("DOMContentLoaded", function() {
 			this.TEXTAREA_PARENT.appendChild(this.TEXTAREA);
 		}
 	}
+	
+	// Валидация вводимых значений
+	(function(Handsontable){
+		function customValidator(query, callback) {			
+			callback(parseFloat(query)==query);
+		}
+
+		// Register an alias
+		Handsontable.validators.registerValidator('numberValidator', customValidator);
+
+})(Handsontable);
 
   hot = new Handsontable(example, {
     data: getData(),
@@ -288,17 +307,20 @@ document.addEventListener("DOMContentLoaded", function() {
 			{
 				data: 'visits',
 				editor: 'numeric',
-				editor: CustomEditor
+				editor: CustomEditor,
+				validator: 'numberValidator'
 			},
 			{
 				data: 'users',
 				editor: 'numeric',
-				editor: CustomEditor
+				editor: CustomEditor,
+				validator: 'numberValidator'
 			},
 			{
 				data: 'views',
 				editor: 'numeric',
-				editor: CustomEditor
+				editor: CustomEditor,
+				validator: 'numberValidator'
 			},
 		],
 		cells: function(row, col, prop){
@@ -318,7 +340,7 @@ document.addEventListener("DOMContentLoaded", function() {
     fillHandle: {
       autoInsertRow: false,
     },
-    beforeChange: function(changes, src) { // отлавливаем событие редактирвания ячейки. Перерисовывавем график.
+    afterChange: function(changes, src) { // отлавливаем событие редактирвания ячейки. Перерисовывавем график.
     	if (src !== 'loadData') {
         changes.forEach((change) => {
         	var row = change[0];
@@ -326,7 +348,7 @@ document.addEventListener("DOMContentLoaded", function() {
           var value = change[3] === '' ? 0 : change[3];
           
 					if(column == 'visits'){
-						updateChart(row, value);
+						updateChart(row, parseFloat(value));
 					}
         });
       }
