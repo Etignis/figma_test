@@ -1,0 +1,114 @@
+<!doctype html>
+<html>
+<head>
+  <title>People</title>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  <meta name="description" content="People"> 
+  <meta name="Keywords" content="People"> 
+  <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/handsontable/dist/handsontable.full.min.css">
+	<link rel="icon" type="image/png" href="imgs/favicon-16x16.png" sizes="16x16">
+  <link rel="icon" type="image/png" href="imgs/favicon-32x32.png" sizes="32x32">
+	<link href="https://fonts.googleapis.com/css?family=Roboto+Slab&display=swap" rel="stylesheet">
+	
+	<script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
+	
+	<script src="https://cdn.jsdelivr.net/npm/handsontable/dist/handsontable.full.min.js"></script>
+	<script src="https://cdn.rawgit.com/handsontable/vue-handsontable-official/40abf2c4/dist/ce/vue-handsontable-ce.min.js"></script>
+	
+	<script lang="javascript" src="https://cdn.jsdelivr.net/npm/xlsx@0.15.2/dist/xlsx.min.js"></script>
+
+	<link href="https://cdn.jsdelivr.net/npm/handsontable/dist/handsontable.full.min.css" rel="stylesheet">
+	
+  <link rel="stylesheet" type="text/css" href="css/style_api.css">
+	<script src='js/api.js'></script>	
+		
+  
+  <!-- IE must understand HTML5: -->
+  <!--[if IE]>
+   <script src="http://html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+  <![endif]-->
+  <!--[if lt IE 9]>
+    <script src="http://css3-mediaqueries-js.googlecode.com/svn/trunk/css3-mediaqueries.js"></script>
+  <![endif]-->
+  <style>
+   article, aside, details, figcaption, figure, footer,header,
+   hgroup, menu, nav, section, div { display: block; }
+  </style>
+</head>
+
+<body>
+	<div id='wrapper'>
+		<header>
+			<div class='inner_container'>
+				<div id='logo'>
+					<a href='#'>
+						<img src="imgs/logo.png">
+					</a>
+				</div>
+				<ul id='main_menu'>
+					<li><a href='#'>Media</a></li>
+					<li><a href='#'>Digital</a></li>    
+					<li><a href='#'>Social</a></li>
+					<li><a href='#'>Commerce</a></li>
+					<li><a href='#' class='active'>People</a></li>
+				</ul>
+				<div id='person'>
+					<a href='#'>					
+					</a>
+				</div>
+			</div>
+		</header>
+   
+	<div class='inner_container'>
+		<h1>Посетители</h1>
+		
+		<div id="app">
+			<hot-table :root="root" :settings="hotSettings"></hot-table>
+			<div class='toolbar'>
+				<button @click="getData">Загрузить с сервера</button>
+				<button @click="getData">Загрузить на сервер</button>
+				<button @click="saveXls">Скачать в .XLS</button>
+			</div>
+		</div>
+
+		
+	</div>
+ 
+	<footer>
+		<div class='inner_container'>
+			<div id='copyright'>
+				<a href='#'>
+					© PUBLICIS GROUPE 2019
+				</a>
+			</div>
+			
+			<ul id='social'>
+				<li>
+					<a href='#' class='vk'>	
+						<object type="image/svg+xml" data="imgs/vk.svg" width="12" height="12" >
+							 VK
+						</object>
+					</a>
+				</li>
+				<li>
+					<a href='#' class='insta'>		
+						<object type="image/svg+xml" data="imgs/insta.svg" width="12" height="12" >
+							 I
+						</object>					
+					</a>
+				</li>
+				<li>
+					<a href='#' class='fb'>	
+						<object type="image/svg+xml" data="imgs/fb.svg" width="12" height="12" >
+							 FB
+						</object>
+					</a>
+				</li>
+			</ul>
+		</div>
+	</footer>
+	
+	</div> 
+</body>
+</html>
