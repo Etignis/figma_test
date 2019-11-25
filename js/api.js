@@ -210,9 +210,32 @@ document.addEventListener("DOMContentLoaded", function() {
 					name: "Имя",
 					username: "Логин",
 					email: "Email",
+					address: {
+						title: "Адрес",
+						nodes: {
+							street: "Улица",
+							suite: "Блок",
+							city: "Город",
+							zipcode: "Индекс",
+							geo: {
+								title: "Координаты",
+								nodes: {
+									lat: "Широта",
+									lng: "Долгота"
+								}
+							}
+						}
+					},
 					phone: "Телефон",
 					website: "Сайт",
-					company: "Компания"
+					company: {
+						title: "Компания",
+						nodes: {
+							name: "Название",
+							catchPhrase: "Слоган",
+							bs: "Описание"
+						}
+					}
 				},
 				hotSettings: {
 					colHeaders: [
@@ -246,7 +269,7 @@ document.addEventListener("DOMContentLoaded", function() {
 						},
 						{
 							editor: CustomEditor,
-							data: 'company'
+							data: 'company.name'
 						},
 					],
 					data: [
@@ -293,11 +316,38 @@ document.addEventListener("DOMContentLoaded", function() {
 				let oResponse = await fetch("https://jsonplaceholder.typicode.com/users");
 				if (oResponse.ok) { 					
 					let json = await oResponse.json();
-					json.forEach(el => el.company = el.company.name);
-					json.forEach(el => el.address = el.address.zipcode);
+					//json.forEach(el => el.company = el.company.name);
+					//json.forEach(el => el.address = el.address.zipcode);
 					this.hotSettings.data = json;
 				} else {
 					alert("Ошибка HTTP: " + oResponse.status);
+				}
+			},
+			
+			sendData: async function(){
+				let sUrl = "https://jsonplaceholder.typicode.com/users";
+				let oParams = {};
+				oParams.method = 'POST';
+				oParams.mode = 'no-cors';
+				/*/
+				var FD  = new FormData();
+				for(key in obj) {
+					FD.append(name, obj[key]);
+				}
+				oParams.body = FD;
+				
+				/**/
+				
+				oParams.body = JSON.stringify(this.hotSettings.data);
+				oParams.headers = {
+							'Content-Type': 'application/json'
+						};
+				try {
+					const oResponse = await fetch(sUrl, oParams);
+					const json = await oResponse.json();
+					console.log('Успех:', JSON.stringify(json));
+				} catch (error) {
+					console.error('Ошибка:', error);
 				}
 			},
 			

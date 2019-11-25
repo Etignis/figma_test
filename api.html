@@ -60,14 +60,14 @@
 			</div>
 		</header>
    
-	<div class='inner_container'>
+	<div id='main' class='inner_container'>
 		<h1>Посетители</h1>
 		
 		<div id="app">
 			<hot-table :root="root" :settings="hotSettings"></hot-table>
 			<div class='toolbar'>
 				<button @click="getData">Загрузить с сервера</button>
-				<button @click="getData">Загрузить на сервер</button>
+				<button @click="sendData">Загрузить на сервер</button>
 				<button @click="saveXls">Скачать в .XLS</button>
 			</div>
 		</div>

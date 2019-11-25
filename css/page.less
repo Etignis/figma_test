@@ -12,7 +12,13 @@ body{
 	max-width: 1024px; 
 	margin: 0 auto; 
 	padding: 0; 
-	background: white
+	background: white;
+	
+	min-height: 100vh;
+	display: flex;
+	flex-direction: column;
+	align-items: stretch;
+	justify-content: space-between;
 }
 .inner_container{
 	max-width: 960px;
@@ -117,6 +123,10 @@ button:active{
 	background-image: url(../imgs/user_hover.png);
 }
 
+#main{
+	flex-grow: 9;
+}
+
 #rowAdder::before{
 	--size: 1.12em;
 	width: var(--size);
@@ -136,6 +146,7 @@ footer{
 	max-width: 1024px;
 	margin: 0 auto;
 	font-size: 10px;
+	width: 100%;
 }
 
 footer .inner_container{
