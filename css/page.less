@@ -63,7 +63,7 @@ button{
 	transition: background .3s;
 	cursor: pointer;
 	display: inline-block;
-	margin: .3rem 0;
+	margin: .3rem;
 	padding: .7rem;
 	text-transform: uppercase;
 	color: white;
@@ -125,6 +125,7 @@ button:active{
 
 #main{
 	flex-grow: 9;
+	width: 100%;
 }
 
 #rowAdder::before{
@@ -138,6 +139,16 @@ button:active{
 	font-weight: bold;
 	font-size: 110%;
 	margin-right: .2em;
+}
+
+.toolbar{
+	margin: .1em -.3em;
+	display: flex;
+	align-items: stretch;
+	justify-content: space-between;
+	.toolbarSpacer{
+		flex-grow: 100;
+	}
 }
 
 footer{

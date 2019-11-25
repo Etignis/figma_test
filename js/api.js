@@ -1,10 +1,12 @@
 document.addEventListener("DOMContentLoaded", function() {
+		var sServColor = '#E5E5E5';
+	// custom Excel downloader
 	let myExcelXML = (function() {
     let Workbook, WorkbookStart = '<?xml version="1.0"?><ss:Workbook  xmlns="urn:schemas-microsoft-com:office:spreadsheet" xmlns:o="urn:schemas-microsoft-com:office:office" xmlns:x="urn:schemas-microsoft-com:office:excel" xmlns:ss="urn:schemas-microsoft-com:office:spreadsheet" xmlns:html="http://www.w3.org/TR/REC-html40">';
     const WorkbookEnd = '</ss:Workbook>';
     let fs, SheetName = 'SHEET 1',
         styleID = 1, columnWidth = 80,
-        fileName = "Employee_List", uri, link;
+        fileName = "ExcellList", uri, link;
 
     class myExcelXML {
         constructor(o) {
@@ -19,7 +21,7 @@ document.addEventListener("DOMContentLoaded", function() {
             fs = s.replace(/&/gi, '&amp;');
         }
 
-        downLoad() {
+        downLoad(sName) {
             const Worksheet = myXMLWorkSheet(SheetName, fs);
 
             WorkbookStart += myXMLStyles(styleID);
@@ -30,7 +32,7 @@ document.addEventListener("DOMContentLoaded", function() {
             link = document.createElement("a");
             link.href = uri;
             link.style = "visibility:hidden";
-            link.download = fileName + ".xls";
+            link.download = (sName||fileName) + ".xls";
 
             document.body.appendChild(link);
             link.click();
@@ -198,6 +200,14 @@ document.addEventListener("DOMContentLoaded", function() {
 		}
 	}
 	
+		// заменяем цвета выделений...
+	Handsontable.hooks.add('afterSelection', function(){
+		var borders = document.querySelectorAll('.handsontable .wtBorder');
+		for (var i = 0; i < borders.length; i++) {
+			borders[i].style.backgroundColor = sServColor;
+		}
+	});
+	
 	const app = new Vue({
 		el: "#app",
 		components: {
@@ -206,6 +216,8 @@ document.addEventListener("DOMContentLoaded", function() {
 		data: function() {
 			return {
 				root: "testHot",
+				sServiceUrl: "https://jsonplaceholder.typicode.com/users",
+				showState: false,
 				oTableColumnsHeaders: {
 					name: "Имя",
 					username: "Логин",
@@ -279,7 +291,7 @@ document.addEventListener("DOMContentLoaded", function() {
 							email: "email",
 							phone: "phone",
 							website: "website",
-							company: "company"
+							company: "company.name"
 						}
 					],
 					
@@ -299,13 +311,22 @@ document.addEventListener("DOMContentLoaded", function() {
 		computed: {
 			formattedExlData: function(){
 				let aData = [];
+
 				this.hotSettings.data.forEach(function(oRow){
-					let o={};
-					for (let key in oRow) {
-						if(this.oTableColumnsHeaders[key]){
-							o[this.oTableColumnsHeaders[key]] = oRow[key];
+					let o = {};
+					this.hotSettings.columns.forEach(function(oCol){
+						let sPath = oCol.data;
+						let aPath = sPath.split(".");
+						console.dir(oRow);
+						
+						let oItem = oRow;
+						for (; aPath.length;) {
+							let sKey = aPath.splice(0, 1)[0];
+							oItem = oItem[sKey];
 						}
-					}
+						o[sPath.split(".")[0]] = oItem;
+					}.bind(this));
+					
 					aData.push(o);
 				}.bind(this));
 				return aData;
@@ -313,23 +334,25 @@ document.addEventListener("DOMContentLoaded", function() {
 		},
 		methods: {
 			getData: async function(){
-				let oResponse = await fetch("https://jsonplaceholder.typicode.com/users");
+				let oResponse = await fetch(this.sServiceUrl);
 				if (oResponse.ok) { 					
 					let json = await oResponse.json();
-					//json.forEach(el => el.company = el.company.name);
-					//json.forEach(el => el.address = el.address.zipcode);
 					this.hotSettings.data = json;
+					
+					this.showState = true;
+					setTimeout(function(){this.showState = false;}.bind(this), 2000);
 				} else {
 					alert("Ошибка HTTP: " + oResponse.status);
 				}
 			},
 			
 			sendData: async function(){
-				let sUrl = "https://jsonplaceholder.typicode.com/users";
 				let oParams = {};
 				oParams.method = 'POST';
 				oParams.mode = 'no-cors';
 				/*/
+				// multipart 
+				
 				var FD  = new FormData();
 				for(key in obj) {
 					FD.append(name, obj[key]);
@@ -343,18 +366,20 @@ document.addEventListener("DOMContentLoaded", function() {
 							'Content-Type': 'application/json'
 						};
 				try {
-					const oResponse = await fetch(sUrl, oParams);
-					const json = await oResponse.json();
-					console.log('Успех:', JSON.stringify(json));
+					const oResponse = await fetch(this.sServiceUrl, oParams);
+					if (oResponse.ok || oResponse.status ==0 ) { // no-corse -> status 0 
+						console.log('Успех:');
+					  console.dir(oResponse);
+						alert("Отправлено");
+					}
 				} catch (error) {
 					console.error('Ошибка:', error);
 				}
 			},
 			
 			saveXls: function(){
-				//var myTestXML = new myExcelXML(this.hotSettings.data);
 				var myTestXML = new myExcelXML(JSON.stringify(this.formattedExlData));
-				myTestXML.downLoad();
+				myTestXML.downLoad("Users");
 			}
 		}
 	})

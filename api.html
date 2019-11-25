@@ -50,7 +50,7 @@
 					<li><a href='#'>Media</a></li>
 					<li><a href='#'>Digital</a></li>    
 					<li><a href='#'>Social</a></li>
-					<li><a href='#'>Commerce</a></li>
+					<li><a href='index.html'>Commerce</a></li>
 					<li><a href='#' class='active'>People</a></li>
 				</ul>
 				<div id='person'>
@@ -69,6 +69,8 @@
 				<button @click="getData">Загрузить с сервера</button>
 				<button @click="sendData">Загрузить на сервер</button>
 				<button @click="saveXls">Скачать в .XLS</button>
+				<div class='toolbarSpacer'></div>
+				<span v-show="showState" style='margin: .6em; color: silver;'>Обновлено</span>
 			</div>
 		</div>
 

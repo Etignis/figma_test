@@ -23,6 +23,11 @@ body {
   margin: 0 auto;
   padding: 0;
   background: white;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  justify-content: space-between;
 }
 .inner_container {
   max-width: 960px;
@@ -63,7 +68,7 @@ button {
   border: none;
   transition: background .3s;
   display: inline-block;
-  margin: .3rem 0;
+  margin: .3rem;
   padding: .7rem;
   text-transform: uppercase;
   color: white;
@@ -115,6 +120,10 @@ button:active {
 #person a:hover {
   background-image: url(../imgs/user_hover.png);
 }
+#main {
+  flex-grow: 9;
+  width: 100%;
+}
 #rowAdder::before {
   --size: 1.12em;
   width: var(--size);
@@ -127,12 +136,22 @@ button:active {
   font-size: 110%;
   margin-right: .2em;
 }
+.toolbar {
+  margin: 0.1em -0.3em;
+  display: flex;
+  align-items: stretch;
+  justify-content: space-between;
+}
+.toolbar .toolbarSpacer {
+  flex-grow: 100;
+}
 footer {
   background: #424242;
   color: #C4C4C4;
   max-width: 1024px;
   margin: 0 auto;
   font-size: 10px;
+  width: 100%;
 }
 footer .inner_container {
   display: flex;
@@ -211,6 +230,10 @@ footer .inner_container {
   background-color: #FFF;
   border: none;
   text-align: left;
+  /*border-bottom: 1px solid #E5E5E5;*/
+}
+.handsontable tr td,
+.handsontable tr td:last-of-type {
   border-bottom: 1px solid #E5E5E5;
 }
 .handsontable td,
