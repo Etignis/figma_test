@@ -1,5 +1,5 @@
 document.addEventListener("DOMContentLoaded", function() {
-	var sServColor = '#E5E5E5';
+	const sServColor = '#E5E5E5';
 	// custom Excel downloader
 	/*/
 	let myExcelXML = (function() {
@@ -203,8 +203,8 @@ document.addEventListener("DOMContentLoaded", function() {
 	
 		// заменяем цвета выделений...
 	Handsontable.hooks.add('afterSelection', function(){
-		var borders = document.querySelectorAll('.handsontable .wtBorder');
-		for (var i = 0; i < borders.length; i++) {
+		const borders = document.querySelectorAll('.handsontable .wtBorder');
+		for (let i = 0; i < borders.length; i++) {
 			borders[i].style.backgroundColor = sServColor;
 		}
 	});
@@ -357,7 +357,7 @@ document.addEventListener("DOMContentLoaded", function() {
 				/*/
 				// multipart 
 				
-				var FD  = new FormData();
+				let FD  = new FormData();
 				for(key in obj) {
 					FD.append(name, obj[key]);
 				}
@@ -405,7 +405,7 @@ document.addEventListener("DOMContentLoaded", function() {
 			},
 			saveXls: function(){
 				/*/
-				var myTestXML = new myExcelXML(JSON.stringify(this.$refs.hot.table.getData()));
+				let myTestXML = new myExcelXML(JSON.stringify(this.$refs.hot.table.getData()));
 				myTestXML.downLoad("Users");
 				/**/
 				const aData = this._prepareExcelData();
