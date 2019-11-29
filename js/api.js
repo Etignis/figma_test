@@ -391,23 +391,32 @@ document.addEventListener("DOMContentLoaded", function() {
 					[{},{},],
 				],
 				*/
-				let aData = [this.hotSettings.colHeaders.map(cell=>({value: cell, type: 'string'}))]
-				.concat(
-					this.$refs.hot.table.getData().map(row=>row.map(cell=>({value: cell, type: 'string'})))
-				);
-				return aData;
+				try{
+					let aData = [this.hotSettings.colHeaders.map(cell=>({value: cell, type: 'string'}))]
+					.concat(
+						this.$refs.hot.table.getData().map(row=>row.map(cell=>({value: cell, type: 'string'})))
+					);
+					return aData;
+				} catch (err) {
+					alert('Ошибка при обработке данных.\r\nПодробноси в консоли.')
+					console.dir(err);
+					return null;
+				}
 			},
 			saveXls: function(){
 				/*/
 				var myTestXML = new myExcelXML(JSON.stringify(this.$refs.hot.table.getData()));
 				myTestXML.downLoad("Users");
 				/**/
-				zipcelx({
-					filename: 'Users',
-					sheet: {
-						data: this._prepareExcelData()
-					}
-				});
+				const aData = this._prepareExcelData();
+				if(aData){
+					zipcelx({
+						filename: 'Users',
+						sheet: {
+							data: aData
+						}
+					});
+				}
 			}
 		}
 	})
