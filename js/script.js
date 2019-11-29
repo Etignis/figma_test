@@ -342,6 +342,10 @@ document.addEventListener("DOMContentLoaded", function() {
     },
     afterChange: function(changes, src) { // отлавливаем событие редактирвания ячейки. Перерисовывавем график.
     	if (src !== 'loadData') {
+				let aNewData = getData()
+				hot.getInstance().loadData(aNewData);
+				//hot.render();
+				
         changes.forEach((change) => {
         	var row = change[0];
           var column = change[1];

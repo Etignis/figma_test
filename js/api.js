@@ -392,9 +392,9 @@ document.addEventListener("DOMContentLoaded", function() {
 				],
 				*/
 				try{
-					let aData = [this.hotSettings.colHeaders.map(cell=>({value: cell, type: 'string'}))]
+					let aData = [this.hotSettings.colHeaders.map(cell=>({value: cell, type: 'string'}))] //заголовки столбцов
 					.concat(
-						this.$refs.hot.table.getData().map(row=>row.map(cell=>({value: cell, type: 'string'})))
+						this.$refs.hot.table.getData().map(row=>row.map(cell=>({value: cell, type: 'string'}))) // данные
 					);
 					return aData;
 				} catch (err) {
