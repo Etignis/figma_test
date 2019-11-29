@@ -1,6 +1,7 @@
 document.addEventListener("DOMContentLoaded", function() {
 	var sServColor = '#E5E5E5';
 	// custom Excel downloader
+	/*/
 	let myExcelXML = (function() {
     let Workbook, WorkbookStart = '<?xml version="1.0"?><ss:Workbook  xmlns="urn:schemas-microsoft-com:office:spreadsheet" xmlns:o="urn:schemas-microsoft-com:office:office" xmlns:x="urn:schemas-microsoft-com:office:excel" xmlns:ss="urn:schemas-microsoft-com:office:spreadsheet" xmlns:html="http://www.w3.org/TR/REC-html40">';
     const WorkbookEnd = '</ss:Workbook>';
@@ -182,7 +183,7 @@ document.addEventListener("DOMContentLoaded", function() {
 
     return myExcelXML;
 })();
-
+	/**/
 	// Переопределяем редактор текста (в основном для выравнивания содержимого)
 	class CustomEditor extends Handsontable.editors.TextEditor {
 		createElements() {
@@ -308,7 +309,7 @@ document.addEventListener("DOMContentLoaded", function() {
 		},
 		
 		methods: {
-			_sendRequest: async function(sUrl, oParams, successCallback, errorCallback, bNoCors) {
+			_sendRequest: async function({sUrl, oParams, successCallback, errorCallback, bNoCors}) {
 				try{
 					let oResponse = await fetch(sUrl, oParams);
 					if (oResponse.ok || bNoCors && oResponse.status ==0) { 	
@@ -344,7 +345,9 @@ document.addEventListener("DOMContentLoaded", function() {
 					}
 				}.bind(this);
 				
-				this._sendRequest(this.sServiceUrl, {}, fSuccsess);				
+				this._sendRequest({
+					sUrl: this.sServiceUrl, 
+					successCallback: fSuccsess});				
 			},
 			
 			sendData: async function(){
@@ -373,35 +376,38 @@ document.addEventListener("DOMContentLoaded", function() {
 					alert("Отправлено");
 				}.bind(this);
 				
-				this._sendRequest(this.sServiceUrl, oParams, fSuccsess, null, true);
+				this._sendRequest({
+					sUrl: this.sServiceUrl, 
+					oParams: oParams, 
+					successCallback: fSuccsess, 
+					bNoCors: true
+				});
 			},
 			
-			
-			_formatExcelData: function() {
-				let aData = [];
-
-				this.hotSettings.data.forEach(function(oRow){
-					let o = {};
-					this.hotSettings.columns.forEach(function(oCol){
-						let sPath = oCol.data;
-						let aPath = sPath.split(".");
-					//	console.dir(oRow);
-						
-						let oItem = oRow;
-						for (; aPath.length;) {
-							let sKey = aPath.splice(0, 1)[0];
-							oItem = oItem[sKey];
-						}
-						o[sPath.split(".")[0]] = oItem;
-					}.bind(this));
-					
-					aData.push(o);
-				}.bind(this));
+			_prepareExcelData: function(){
+				/*
+				[
+					[{},{},],
+					[{},{},],
+				],
+				*/
+				let aData = [this.hotSettings.colHeaders.map(cell=>({value: cell, type: 'string'}))]
+				.concat(
+					this.$refs.hot.table.getData().map(row=>row.map(cell=>({value: cell, type: 'string'})))
+				);
 				return aData;
 			},
 			saveXls: function(){
-				var myTestXML = new myExcelXML(JSON.stringify(this._formatExcelData()));
+				/*/
+				var myTestXML = new myExcelXML(JSON.stringify(this.$refs.hot.table.getData()));
 				myTestXML.downLoad("Users");
+				/**/
+				zipcelx({
+					filename: 'Users',
+					sheet: {
+						data: this._prepareExcelData()
+					}
+				});
 			}
 		}
 	})
