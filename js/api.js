@@ -1,5 +1,5 @@
 document.addEventListener("DOMContentLoaded", function() {
-		var sServColor = '#E5E5E5';
+	var sServColor = '#E5E5E5';
 	// custom Excel downloader
 	let myExcelXML = (function() {
     let Workbook, WorkbookStart = '<?xml version="1.0"?><ss:Workbook  xmlns="urn:schemas-microsoft-com:office:spreadsheet" xmlns:o="urn:schemas-microsoft-com:office:office" xmlns:x="urn:schemas-microsoft-com:office:excel" xmlns:ss="urn:schemas-microsoft-com:office:spreadsheet" xmlns:html="http://www.w3.org/TR/REC-html40">';
@@ -286,12 +286,12 @@ document.addEventListener("DOMContentLoaded", function() {
 					],
 					data: [
 						{
-							name: "name",
-							username: "username",
-							email: "email",
-							phone: "phone",
-							website: "website",
-							company: "company.name"
+							name: "Имя",
+							username: "Логин",
+							email: "Email",
+							phone: "Телефон",
+							website: "Сайт",
+							'company.name': "Компания"
 						}
 					],
 					
@@ -300,50 +300,51 @@ document.addEventListener("DOMContentLoaded", function() {
 					maxRows: 6,
 					manualColumnResize: true,
 					manualRowResize: true
-					/*colHeaders: true,
-					rowHeaders: true*/
 				},
 			};
 		},
 		created: function(){
 			this.getData();
 		},
-		computed: {
-			formattedExlData: function(){
-				let aData = [];
-
-				this.hotSettings.data.forEach(function(oRow){
-					let o = {};
-					this.hotSettings.columns.forEach(function(oCol){
-						let sPath = oCol.data;
-						let aPath = sPath.split(".");
-						console.dir(oRow);
-						
-						let oItem = oRow;
-						for (; aPath.length;) {
-							let sKey = aPath.splice(0, 1)[0];
-							oItem = oItem[sKey];
-						}
-						o[sPath.split(".")[0]] = oItem;
-					}.bind(this));
-					
-					aData.push(o);
-				}.bind(this));
-				return aData;
-			}
-		},
+		
 		methods: {
-			getData: async function(){
-				let oResponse = await fetch(this.sServiceUrl);
-				if (oResponse.ok) { 					
-					let json = await oResponse.json();
-					this.hotSettings.data = json;
-					
-					this.showState = true;
-					setTimeout(function(){this.showState = false;}.bind(this), 2000);
-				} else {
-					alert("Ошибка HTTP: " + oResponse.status);
+			_sendRequest: async function(sUrl, oParams, successCallback, errorCallback, bNoCors) {
+				try{
+					let oResponse = await fetch(sUrl, oParams);
+					if (oResponse.ok || bNoCors && oResponse.status ==0) { 	
+						if(successCallback) {
+							successCallback(oResponse);
+						}	
+					} else {
+						alert(`Ошибка HTTP: ${oResponse.status}`);
+						if(errorCallback) {
+							errorCallback();
+						}	
+					}
+				} catch (err) {
+					alert("Ошибка при попытке отправить запрос.\r\nПодробности в консоли.");
+					console.dir(err);
+					if(errorCallback) {
+						errorCallback();
+					}	
 				}
+				
+			},
+			getData: async function(){
+				const fSuccsess = async function(oResp){
+					if (oResp) {
+						const json = await oResp.json();
+						let oTable = this.$refs.hot.table;
+						oTable.loadData(json);
+						oTable.render();
+						//this.hotSettings.data = json;
+						
+						this.showState = true;
+						setTimeout(function(){this.showState = false;}.bind(this), 2000);
+					}
+				}.bind(this);
+				
+				this._sendRequest(this.sServiceUrl, {}, fSuccsess);				
 			},
 			
 			sendData: async function(){
@@ -363,22 +364,43 @@ document.addEventListener("DOMContentLoaded", function() {
 				
 				oParams.body = JSON.stringify(this.hotSettings.data);
 				oParams.headers = {
-							'Content-Type': 'application/json'
-						};
-				try {
-					const oResponse = await fetch(this.sServiceUrl, oParams);
-					if (oResponse.ok || oResponse.status ==0 ) { // no-corse -> status 0 
-						console.log('Успех:');
-					  console.dir(oResponse);
-						alert("Отправлено");
-					}
-				} catch (error) {
-					console.error('Ошибка:', error);
-				}
+					'Content-Type': 'application/json'
+				};
+					
+				const fSuccsess = async function(oResp){
+					console.log('Успех:');
+					console.dir(oResp);
+					alert("Отправлено");
+				}.bind(this);
+				
+				this._sendRequest(this.sServiceUrl, oParams, fSuccsess, null, true);
 			},
 			
+			
+			_formatExcelData: function() {
+				let aData = [];
+
+				this.hotSettings.data.forEach(function(oRow){
+					let o = {};
+					this.hotSettings.columns.forEach(function(oCol){
+						let sPath = oCol.data;
+						let aPath = sPath.split(".");
+					//	console.dir(oRow);
+						
+						let oItem = oRow;
+						for (; aPath.length;) {
+							let sKey = aPath.splice(0, 1)[0];
+							oItem = oItem[sKey];
+						}
+						o[sPath.split(".")[0]] = oItem;
+					}.bind(this));
+					
+					aData.push(o);
+				}.bind(this));
+				return aData;
+			},
 			saveXls: function(){
-				var myTestXML = new myExcelXML(JSON.stringify(this.formattedExlData));
+				var myTestXML = new myExcelXML(JSON.stringify(this._formatExcelData()));
 				myTestXML.downLoad("Users");
 			}
 		}
